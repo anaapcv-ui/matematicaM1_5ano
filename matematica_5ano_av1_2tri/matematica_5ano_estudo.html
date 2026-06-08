@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matemática 5º Ano — Frações e Decimais 🌍🍰</title>
+<style>
+  :root{
+    --azul:#1e6fd9; --rosa:#e84d8a; --verde:#2eaf6b; --laranja:#f5862e;
+    --roxo:#7c4dd9; --amarelo:#f7c948; --creme:#fff8ee; --escuro:#2b3a55;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Segoe UI', Verdana, Arial, sans-serif;
+    background:linear-gradient(160deg,#dff1ff 0%,#ffeef6 50%,#fff6e3 100%);
+    min-height:100vh; color:var(--escuro);
+  }
+  .topo{
+    background:linear-gradient(90deg,var(--azul),var(--roxo));
+    color:#fff; text-align:center; padding:18px 10px 14px;
+    border-bottom:6px solid var(--amarelo);
+  }
+  .topo h1{font-size:1.5em;}
+  .topo p{opacity:.92; font-size:.95em; margin-top:4px;}
+  .abas{
+    display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+    background:#ffffffd9; padding:10px; position:sticky; top:0; z-index:50;
+    box-shadow:0 2px 8px #0002;
+  }
+  .aba{
+    border:none; border-radius:24px; padding:10px 20px; font-size:1em;
+    font-weight:bold; cursor:pointer; background:#e9eef7; color:var(--escuro);
+    transition:.2s;
+  }
+  .aba:hover{transform:translateY(-2px);}
+  .aba.ativa{background:var(--azul); color:#fff; box-shadow:0 3px 8px #1e6fd955;}
+  .painel{display:none; max-width:880px; margin:0 auto; padding:18px 14px 60px;}
+  .painel.ativo{display:block;}
+
+  /* ===== barra de progresso e estrelas ===== */
+  .placarBox{
+    background:#fff; border-radius:16px; padding:12px 16px; margin:12px 0;
+    box-shadow:0 3px 10px #0001; display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  .barraFundo{flex:1; min-width:200px; background:#e8edf5; border-radius:12px; height:20px; overflow:hidden;}
+  .barraFrente{height:100%; width:0%; border-radius:12px;
+    background:linear-gradient(90deg,var(--verde),var(--amarelo)); transition:width .6s;}
+  .estrelas{font-size:1.25em; letter-spacing:2px;}
+
+  /* ===== blocos da leitura guiada ===== */
+  .bloco{border-radius:18px; margin:16px 0; overflow:hidden; box-shadow:0 4px 12px #0002; background:#fff;}
+  .bloco h2{
+    padding:16px 18px; color:#fff; cursor:pointer; font-size:1.12em;
+    display:flex; justify-content:space-between; align-items:center; user-select:none;
+  }
+  .bloco h2 .seta{transition:.3s;}
+  .bloco.aberto h2 .seta{transform:rotate(90deg);}
+  .conteudo{display:none; padding:18px;}
+  .bloco.aberto .conteudo{display:block; animation:surgir .4s;}
+  @keyframes surgir{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  .b1 h2{background:var(--laranja);} .b2 h2{background:var(--rosa);}
+  .b3 h2{background:var(--verde);}  .b4 h2{background:var(--roxo);}
+  .b5 h2{background:var(--azul);}   .b6 h2{background:#0ea5a5;}
+  .b7 h2{background:#d94f30;}       .b8 h2{background:#5b6acf;}
+  .conteudo p{margin:10px 0; line-height:1.65; font-size:1.02em;}
+  .caixinha{
+    background:var(--creme); border:2px dashed var(--laranja); border-radius:14px;
+    padding:14px 16px; margin:14px 0;
+  }
+  .caixinha h4{color:var(--laranja); margin-bottom:8px;}
+  .caixinha ul{margin-left:20px; line-height:1.7;}
+  .exemplo{
+    background:#eef6ff; border-left:6px solid var(--azul); border-radius:0 12px 12px 0;
+    padding:12px 14px; margin:12px 0; line-height:1.6;
+  }
+  .frac{display:inline-block; text-align:center; vertical-align:middle; margin:0 3px; font-weight:bold;}
+  .frac span{display:block; padding:0 5px;}
+  .frac span:first-child{border-bottom:2px solid currentColor;}
+
+  /* ===== quiz ===== */
+  .quiz{background:#f5f7fb; border-radius:14px; padding:14px; margin-top:16px;}
+  .quiz h4{margin-bottom:10px; color:var(--azul);}
+  .perg{background:#fff; border-radius:12px; padding:12px; margin:10px 0; box-shadow:0 2px 6px #0001;}
+  .perg p{font-weight:bold; margin-bottom:8px;}
+  .ops{display:flex; flex-direction:column; gap:7px;}
+  .op{
+    text-align:left; border:2px solid #dbe3ef; background:#fff; border-radius:10px;
+    padding:9px 12px; font-size:1em; cursor:pointer; transition:.15s;
+  }
+  .op:hover{border-color:var(--azul); background:#f0f6ff;}
+  .op.certa{background:#d9f5e5; border-color:var(--verde); animation:pulinho .4s;}
+  .op.errada{background:#ffe1e1; border-color:#e05555; animation:treme .35s;}
+  .op:disabled{cursor:default; opacity:.85;}
+  @keyframes pulinho{50%{transform:scale(1.04);}}
+  @keyframes treme{25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+  .feedback{margin-top:8px; font-size:.95em; display:none; border-radius:8px; padding:8px 10px;}
+  .feedback.show{display:block;}
+  .feedback.ok{background:#d9f5e5; color:#19713f;}
+  .feedback.nok{background:#ffe9e9; color:#a33;}
+
+  /* ===== resumo ===== */
+  .gradePalavras{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin:14px 0;}
+  .cardPalavra{
+    background:#fff; border-radius:14px; padding:14px; box-shadow:0 3px 9px #0002;
+    border-top:6px solid var(--azul);
+  }
+  .cardPalavra:nth-child(3n+2){border-top-color:var(--rosa);}
+  .cardPalavra:nth-child(3n){border-top-color:var(--verde);}
+  .cardPalavra b{font-size:1.05em;}
+  .cardPalavra p{font-size:.95em; margin-top:6px; line-height:1.5;}
+  .dicas{
+    background:#fff3cd; border:2px solid var(--amarelo); border-radius:14px;
+    padding:16px; margin:16px 0; line-height:1.8;
+  }
+  .dicas h3{color:#9c6f00; margin-bottom:8px;}
+  .relampago .pergR{
+    background:#fff; border-radius:12px; margin:8px 0; padding:12px 14px; cursor:pointer;
+    box-shadow:0 2px 7px #0001; transition:.2s;
+  }
+  .relampago .pergR:hover{transform:translateX(4px);}
+  .pergR .resp{display:none; margin-top:8px; color:#19713f; font-weight:bold;}
+  .pergR.aberta .resp{display:block;}
+  .secTit{margin:22px 0 8px; color:var(--escuro); border-bottom:3px solid var(--amarelo); display:inline-block; padding-bottom:3px;}
+
+  /* ===== jogo V/F ===== */
+  .vfCard{
+    background:#fff; border-radius:18px; padding:22px; margin:14px 0;
+    box-shadow:0 4px 14px #0002; text-align:center;
+  }
+  .vfFrase{font-size:1.18em; line-height:1.6; min-height:80px; display:flex; align-items:center; justify-content:center;}
+  .vfBotoes{display:flex; gap:14px; justify-content:center; margin-top:16px;}
+  .btnV,.btnF{
+    border:none; border-radius:14px; padding:14px 34px; font-size:1.15em; font-weight:bold;
+    cursor:pointer; color:#fff; transition:.15s;
+  }
+  .btnV{background:var(--verde);} .btnF{background:#e05555;}
+  .btnV:hover,.btnF:hover{transform:scale(1.06);}
+  .vfExp{margin-top:14px; border-radius:12px; padding:12px; display:none; text-align:left; line-height:1.55;}
+  .vfExp.ok{display:block; background:#d9f5e5; color:#19713f;}
+  .vfExp.nok{display:block; background:#ffe9e9; color:#a33;}
+  .btnProx,.btnJogar{
+    margin-top:14px; border:none; border-radius:24px; padding:12px 28px; font-size:1.05em;
+    font-weight:bold; cursor:pointer; background:var(--azul); color:#fff;
+  }
+  .btnProx:hover,.btnJogar:hover{transform:scale(1.04);}
+  .telaFinal{text-align:center; padding:30px 10px;}
+  .telaFinal h2{font-size:1.6em; margin-bottom:10px;}
+  .telaFinal .notaGrande{font-size:3em; margin:10px 0;}
+  .confete{font-size:2em;}
+  .rodape{
+    text-align:center; padding:18px; color:#7a8499; font-size:.9em;
+  }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <h1>🌍 Missão Matemática: Frações e Decimais 🍰</h1>
+  <p>5º ano • Unidades 3 e 4 • Prova de 12/06 — Você consegue! 💪</p>
+</div>
+
+<div class="abas">
+  <button class="aba ativa" data-painel="p-leitura">📖 Leitura Guiada</button>
+  <button class="aba" data-painel="p-resumo">⭐ Resumo da Prova</button>
+  <button class="aba" data-painel="p-vf">🎮 Verdadeiro ou Falso</button>
+</div>
+
+<!-- ============ LEITURA GUIADA ============ -->
+<div class="painel ativo" id="p-leitura">
+
+  <div class="placarBox">
+    <span>🚀 Progresso:</span>
+    <div class="barraFundo"><div class="barraFrente" id="barraLG"></div></div>
+    <span id="pctLG">0%</span>
+    <span class="estrelas" id="estrelasLG">☆☆☆☆☆☆☆☆</span>
+  </div>
+
+  <p style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 3px 9px #0001;line-height:1.6;">
+    👩‍🍳 <b>Bem-vinda à cozinha do mundo!</b> A chef <b>Bia</b> e o explorador <b>Léo</b> vão viajar por vários
+    países provando comidas típicas — e usando <b>frações</b> e <b>números decimais</b> em cada parada.
+    Clique em cada bloco para abrir, leia com calma e responda às perguntinhas. Cada bloco completo acende uma estrela! ⭐
+  </p>
+
+  <!-- BLOCO 1 -->
+  <div class="bloco b1" id="bl1">
+    <h2 onclick="abrirBloco('bl1')">🍫 Bloco 1 — Fração de uma quantidade e de uma medida <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>A chef Bia fez um <b>brownie</b> (bolo dos Estados Unidos) e cortou em <b>12 pedaços iguais</b>.
+      Cecília comeu <span class="frac"><span>1</span><span>3</span></span> dos pedaços. Quantos pedaços ela comeu?</p>
+      <div class="exemplo">
+        🧮 <b>Receita do cálculo:</b> para achar a fração de uma quantidade,
+        <b>divida pelo número de baixo</b> (denominador) e <b>multiplique pelo número de cima</b> (numerador).<br>
+        <span class="frac"><span>1</span><span>3</span></span> de 12 → 12 ÷ 3 = <b>4</b> → 4 × 1 = <b>4 pedaços</b> 🍫<br>
+        <span class="frac"><span>2</span><span>3</span></span> de 12 → 12 ÷ 3 = 4 → 4 × 2 = <b>8 pedaços</b>
+      </div>
+      <p>Na festa do Sérgio havia <b>400 salgadinhos</b> de vários países:
+      <span class="frac"><span>2</span><span>5</span></span> eram samosas (Índia) → 400 ÷ 5 = 80 → 80 × 2 = <b>160 samosas</b>!</p>
+      <p>Também funciona com <b>medidas</b>! Luciano comprou <span class="frac"><span>3</span><span>4</span></span> de litro de suco de graviola.
+      Como 1 litro = 1.000 mL: 1.000 ÷ 4 = 250 → 250 × 3 = <b>750 mL</b>.
+      E <span class="frac"><span>1</span><span>5</span></span> de 1 kg de arroz? 1 kg = 1.000 g → 1.000 ÷ 5 = <b>200 g</b>.</p>
+      <div class="caixinha">
+        <h4>📦 Caixinha de conceitos</h4>
+        <ul>
+          <li><b>Numerador</b>: número de cima — quantas partes usamos.</li>
+          <li><b>Denominador</b>: número de baixo — em quantas partes iguais o todo foi dividido.</li>
+          <li><b>Fração de quantidade</b>: divide pelo denominador, multiplica pelo numerador.</li>
+          <li><b>Lembrete</b>: 1 litro = 1.000 mL • 1 kg = 1.000 g • 1 metro = 100 cm.</li>
+        </ul>
+      </div>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) Em uma caixa há 60 bombons. Léo comeu <span class="frac"><span>1</span><span>4</span></span> da caixa. Quantos bombons ele comeu?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl1','Quase! 60 ÷ 4 = 15. O 4 é o denominador, usamos ele para dividir.')">240 bombons</button>
+            <button class="op" onclick="responder(this,true,'bl1','Isso! 60 ÷ 4 = 15 bombons. 🍬')">15 bombons</button>
+            <button class="op" onclick="responder(this,false,'bl1','Cuidado: primeiro divida 60 por 4 (= 15).')">20 bombons</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Uma jarra tem 1 litro de suco. Bia serviu <span class="frac"><span>2</span><span>5</span></span> do litro. Quantos mililitros ela serviu?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl1','Lembre: 1.000 ÷ 5 = 200 e 200 × 2 = 400.')">250 mL</button>
+            <button class="op" onclick="responder(this,false,'bl1','Esse seria 1/2 do litro. Aqui é 2/5: 1.000 ÷ 5 = 200, depois × 2.')">500 mL</button>
+            <button class="op" onclick="responder(this,true,'bl1','Perfeito! 1.000 ÷ 5 = 200 → 200 × 2 = 400 mL. 🧃')">400 mL</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) Dos 400 salgadinhos, <span class="frac"><span>1</span><span>5</span></span> eram arancinis (Itália). Quantos arancinis havia?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl1','Muito bem! 400 ÷ 5 = 80 arancinis. 🇮🇹')">80</button>
+            <button class="op" onclick="responder(this,false,'bl1','Esse é o resultado de 2/5 (160). Para 1/5, basta 400 ÷ 5.')">160</button>
+            <button class="op" onclick="responder(this,false,'bl1','Hmm, 400 ÷ 5 = 80, não 100.')">100</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 2 -->
+  <div class="bloco b2" id="bl2">
+    <h2 onclick="abrirBloco('bl2')">🧇 Bloco 2 — Tipos de fração e números mistos <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>Na Bélgica, Léo pediu um <b>waffle</b> cortado em 4 partes e comeu 1 parte:
+      <span class="frac"><span>1</span><span>4</span></span>. Como o pedaço é <b>menor que o inteiro</b>, essa é uma
+      <b>fração própria</b> (numerador menor que o denominador).</p>
+      <p>Karina fez uma <b>cuca</b> (bolo alemão) com 8 pedaços e todos foram comidos:
+      <span class="frac"><span>8</span><span>8</span></span> = 1 inteiro! Quando a fração representa um número inteiro,
+      ela é uma <b>fração aparente</b>. Outro exemplo: <span class="frac"><span>8</span><span>4</span></span> = 2 inteiros.</p>
+      <p>Patrícia comprou 2 <b>pumpkin pies</b> cortadas em 8 partes cada e sobraram
+      <span class="frac"><span>14</span><span>8</span></span>: o numerador é <b>maior</b> que o denominador!
+      Essa é uma <b>fração imprópria</b> — vale mais que 1 inteiro. Podemos escrever como <b>número misto</b>:
+      1 inteiro e <span class="frac"><span>6</span><span>8</span></span>.</p>
+      <div class="exemplo">
+        🍰 Roberto dividiu 3 minitortas entre 2 filhos: cada um recebeu 1 torta inteira + metade =
+        <b>1<span class="frac"><span>1</span><span>2</span></span></b> (lemos: <b>"um e meio"</b>).
+      </div>
+      <div class="caixinha">
+        <h4>📦 Caixinha de conceitos</h4>
+        <ul>
+          <li><b>Fração própria</b>: numerador &lt; denominador (menor que 1). Ex.: <b>3/8</b>.</li>
+          <li><b>Fração imprópria</b>: numerador ≥ denominador (maior ou igual a 1). Ex.: <b>5/3</b>.</li>
+          <li><b>Fração aparente</b>: a divisão dá um número inteiro exato. Ex.: <b>8/4 = 2</b>. Toda aparente também é imprópria!</li>
+          <li><b>Número misto</b>: inteiro + fração. Ex.: <b>2¾</b> (dois inteiros e três quartos).</li>
+        </ul>
+      </div>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) A fração <span class="frac"><span>6</span><span>6</span></span> é...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl2','Própria é quando o numerador é MENOR. Aqui são iguais: 6 ÷ 6 = 1 inteiro.')">própria</button>
+            <button class="op" onclick="responder(this,true,'bl2','Isso! 6 ÷ 6 = 1 inteiro exato → fração aparente. ✔')">aparente (vale 1 inteiro)</button>
+            <button class="op" onclick="responder(this,false,'bl2','Ela não é menor que 1: 6/6 é exatamente 1 inteiro → aparente.')">menor do que 1</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Em um estacionamento com 20 vagas, todas estão ocupadas. A fração das vagas ocupadas é <span class="frac"><span>20</span><span>20</span></span>. Ela é...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl2','Certo! 20/20 = 1 inteiro: o estacionamento todo. Fração aparente! 🚗')">aparente</button>
+            <button class="op" onclick="responder(this,false,'bl2','Própria seria menor que 1, ex.: 3/20.')">própria</button>
+            <button class="op" onclick="responder(this,false,'bl2','Número misto tem parte inteira E fração juntas, como 1½.')">um número misto</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) Qual número misto representa a fração <span class="frac"><span>14</span><span>8</span></span>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl2','Quase! 14/8 = 8/8 (1 inteiro) + 6/8.')">2 inteiros e 2/8</button>
+            <button class="op" onclick="responder(this,true,'bl2','Excelente! 14/8 = 1 inteiro (8/8) e sobram 6/8. 🥧')">1 inteiro e 6/8</button>
+            <button class="op" onclick="responder(this,false,'bl2','14/8 é MAIOR que 1 (o numerador passa do denominador).')">menos de 1 inteiro</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 3 -->
+  <div class="bloco b3" id="bl3">
+    <h2 onclick="abrirBloco('bl3')">🍝 Bloco 3 — Frações equivalentes e simplificação <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>Quatro amigos dividiram lasanhas <b>do mesmo tamanho</b>:
+      Renan comeu <span class="frac"><span>1</span><span>2</span></span>,
+      Isadora <span class="frac"><span>2</span><span>4</span></span>,
+      Clara <span class="frac"><span>3</span><span>6</span></span> e
+      Felipe <span class="frac"><span>4</span><span>8</span></span>.
+      Quem comeu mais? <b>Ninguém — todos comeram a mesma quantidade!</b></p>
+      <div class="exemplo">
+        ✨ <span class="frac"><span>1</span><span>2</span></span> =
+        <span class="frac"><span>2</span><span>4</span></span> =
+        <span class="frac"><span>3</span><span>6</span></span> =
+        <span class="frac"><span>4</span><span>8</span></span> → são <b>frações equivalentes</b>: parecem diferentes, mas valem o mesmo!
+      </div>
+      <p><b>Como criar uma equivalente?</b> Multiplique (ou divida) o numerador <b>e</b> o denominador pelo
+      <b>mesmo número</b> (diferente de zero).</p>
+      <div class="exemplo">
+        ×2 em cima e embaixo: <span class="frac"><span>3</span><span>5</span></span> →
+        <span class="frac"><span>6</span><span>10</span></span> ✔ &nbsp;&nbsp;|&nbsp;&nbsp;
+        ÷2 em cima e embaixo: <span class="frac"><span>4</span><span>8</span></span> →
+        <span class="frac"><span>2</span><span>4</span></span> ✔
+      </div>
+      <p><b>Simplificar</b> é dividir os dois números até a fração ficar o mais "magrinha" possível:
+      <span class="frac"><span>4</span><span>8</span></span> ÷2 → <span class="frac"><span>2</span><span>4</span></span> ÷2 →
+      <span class="frac"><span>1</span><span>2</span></span>. Quando não dá mais para dividir, ela é
+      <b>irredutível</b>!</p>
+      <div class="caixinha">
+        <h4>📦 Caixinha de conceitos</h4>
+        <ul>
+          <li><b>Frações equivalentes</b>: representam a mesma quantidade.</li>
+          <li><b>Regra de ouro</b>: o que fizer em cima, faça embaixo (mesmo número!).</li>
+          <li><b>Simplificação</b>: dividir numerador e denominador pelo mesmo número.</li>
+          <li><b>Fração irredutível</b>: não dá mais para simplificar. Ex.: <b>1/2</b>, <b>2/3</b>.</li>
+        </ul>
+      </div>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) Qual fração é equivalente a <span class="frac"><span>3</span><span>5</span></span>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl3','Cuidado: 3+3=6 e 5+3=8 — somar não vale! Tem que MULTIPLICAR os dois pelo mesmo número.')">6/8</button>
+            <button class="op" onclick="responder(this,true,'bl3','Isso! 3×2=6 e 5×2=10 → 6/10. ✔')">6/10</button>
+            <button class="op" onclick="responder(this,false,'bl3','Aqui só o denominador mudou. Os DOIS precisam ser multiplicados.')">3/10</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Simplificando <span class="frac"><span>12</span><span>18</span></span> até ficar irredutível, chegamos a...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl3','6/9 ainda dá para dividir por 3! Continue: 6÷3=2, 9÷3=3.')">6/9</button>
+            <button class="op" onclick="responder(this,false,'bl3','Confira: 12÷6=2 e 18÷6=3, então é 2/3.')">3/4</button>
+            <button class="op" onclick="responder(this,true,'bl3','Perfeito! 12÷6=2 e 18÷6=3 → 2/3, que não simplifica mais. 🏆')">2/3</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) No dominó das frações, Alan disse que <span class="frac"><span>4</span><span>10</span></span> pode se conectar à peça <span class="frac"><span>2</span><span>5</span></span>. Ele está certo?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl3','Sim! 4÷2=2 e 10÷2=5: são equivalentes, valem o mesmo. 🁢')">Sim, porque 4/10 simplificada é 2/5</button>
+            <button class="op" onclick="responder(this,false,'bl3','Os números são diferentes, mas o VALOR é o mesmo: 4/10 = 2/5.')">Não, porque os números são diferentes</button>
+            <button class="op" onclick="responder(this,false,'bl3','Não precisa ser igual “de aparência”: basta ser equivalente (4/10 = 2/5).')">Não, porque 4/10 é maior</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 4 -->
+  <div class="bloco b4" id="bl4">
+    <h2 onclick="abrirBloco('bl4')">🥧 Bloco 4 — Comparação de frações <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>Nicole tomou <span class="frac"><span>2</span><span>5</span></span> de um pote de açaí e Davi tomou
+      <span class="frac"><span>3</span><span>5</span></span>. Quem tomou mais?
+      O denominador é o mesmo (potes divididos em 5), então ganha quem tem <b>mais pedaços</b>: Davi!
+      <b>2/5 &lt; 3/5</b>.</p>
+      <div class="caixinha">
+        <h4>📦 As 3 regras da comparação</h4>
+        <ul>
+          <li><b>Denominadores iguais</b> → maior é a de <b>maior numerador</b>. Ex.: 3/5 &gt; 2/5.</li>
+          <li><b>Numeradores iguais</b> → maior é a de <b>menor denominador</b> (pedaços maiores!). Ex.: 3/5 &gt; 3/7.</li>
+          <li><b>Tudo diferente?</b> → transforme em <b>equivalentes</b> com o mesmo denominador (ou use as tiras de fração).</li>
+        </ul>
+      </div>
+      <div class="exemplo">
+        🧀 André tirou <span class="frac"><span>4</span><span>8</span></span> do queijo e Anita tirou
+        <span class="frac"><span>1</span><span>4</span></span>. Truque: 1/4 = 2/8.
+        Agora ficou fácil: 4/8 &gt; 2/8, então <b>4/8 &gt; 1/4</b>. André tirou mais!
+      </div>
+      <div class="exemplo">
+        🍴 Marina comeu <span class="frac"><span>2</span><span>3</span></span> da quiche e Ester comeu
+        <span class="frac"><span>3</span><span>8</span></span>. Usando equivalentes com denominador 24:
+        2/3 = 16/24 e 3/8 = 9/24 → <b>2/3 &gt; 3/8</b>. Marina comeu mais!
+      </div>
+      <p>💡 Para pôr em <b>ordem crescente</b> frações com o mesmo numerador, como
+      <span class="frac"><span>8</span><span>3</span></span>, <span class="frac"><span>8</span><span>2</span></span>,
+      <span class="frac"><span>8</span><span>10</span></span> e <span class="frac"><span>8</span><span>6</span></span>:
+      quanto <b>maior</b> o denominador, <b>menor</b> a fração →
+      <b>8/10 &lt; 8/6 &lt; 8/3 &lt; 8/2</b>.</p>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) Quem é maior: <span class="frac"><span>6</span><span>12</span></span> ou <span class="frac"><span>7</span><span>12</span></span>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl4','Mesmo denominador: vence o numerador maior (7 > 6).')">6/12</button>
+            <button class="op" onclick="responder(this,true,'bl4','Isso! Denominadores iguais → 7 pedaços é mais que 6. ✔')">7/12</button>
+            <button class="op" onclick="responder(this,false,'bl4','Não são iguais: 7/12 tem um pedaço a mais que 6/12.')">São iguais</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Quem é maior: <span class="frac"><span>1</span><span>5</span></span> ou <span class="frac"><span>1</span><span>4</span></span>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl4','Pegadinha clássica! Dividir em 5 partes deixa cada pedaço MENOR. 1/4 > 1/5.')">1/5</button>
+            <button class="op" onclick="responder(this,true,'bl4','Muito bem! Numeradores iguais → menor denominador ganha: 1/4 > 1/5. 🍕')">1/4</button>
+            <button class="op" onclick="responder(this,false,'bl4','Não são iguais! Pizza em 4 fatias tem fatias maiores que em 5.')">São iguais</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) Compare: <span class="frac"><span>1</span><span>2</span></span> ____ <span class="frac"><span>5</span><span>4</span></span></p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl4','Olhe bem: 5/4 é imprópria, vale MAIS que 1 inteiro. E 1/2 é menos que 1.')">1/2 &gt; 5/4</button>
+            <button class="op" onclick="responder(this,true,'bl4','Exato! 1/2 é menor que 1, e 5/4 é maior que 1 → 1/2 < 5/4. ✔')">1/2 &lt; 5/4</button>
+            <button class="op" onclick="responder(this,false,'bl4','Não: 1/2 = 0,5 e 5/4 = 1,25. Bem diferentes!')">São equivalentes</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 5 -->
+  <div class="bloco b5" id="bl5">
+    <h2 onclick="abrirBloco('bl5')">💧 Bloco 5 — Décimos, centésimos e milésimos <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>Agora Léo e Bia viajam comparando <b>indicadores dos países</b> — números com vírgula!
+      Os <b>números decimais</b> têm uma parte depois da vírgula que vale menos que 1 inteiro.</p>
+      <div class="exemplo">
+        🔵 <b>Décimo</b> = 1 inteiro dividido em <b>10</b> partes → 0,1 = <span class="frac"><span>1</span><span>10</span></span><br>
+        🟡 <b>Centésimo</b> = 1 inteiro dividido em <b>100</b> partes → 0,01 = <span class="frac"><span>1</span><span>100</span></span><br>
+        🔴 <b>Milésimo</b> = 1 inteiro dividido em <b>1.000</b> partes → 0,001 = <span class="frac"><span>1</span><span>1000</span></span>
+      </div>
+      <p>Exemplos do livro: <b>0,2</b> da população (dois décimos = 2/10) tem ensino superior;
+      no Uruguai, <b>0,95</b> das pessoas (95 centésimos = 95 de cada 100) vivem em área urbana;
+      na Albânia, <b>0,988</b> (988 milésimos = 988 de cada 1.000) são alfabetizadas.</p>
+      <div class="exemplo">
+        🧮 <b>Calculando:</b> um décimo de uma quantidade = ÷10 • um centésimo = ÷100 • um milésimo = ÷1.000<br>
+        Um décimo de 80 = <b>8</b> • Um centésimo de 500 = <b>5</b> • Um milésimo de 4.400 = <b>4,4</b><br>
+        🎒 A mochila deve ter no máximo um décimo da massa da pessoa: Tiago tem 40 kg → 40 ÷ 10 = <b>4 kg</b>!
+      </div>
+      <div class="caixinha">
+        <h4>📦 Caixinha de conceitos</h4>
+        <ul>
+          <li><b>0,1</b> = um décimo (1 casa depois da vírgula).</li>
+          <li><b>0,01</b> = um centésimo (2 casas depois da vírgula).</li>
+          <li><b>0,001</b> = um milésimo (3 casas depois da vírgula).</li>
+          <li>Quadro de ordens: <b>D | U , d | c | m</b> (dezena, unidade, décimo, centésimo, milésimo).</li>
+        </ul>
+      </div>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) Como escrevemos "oito centésimos" na forma decimal?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl5','0,8 é oito DÉCIMOS (1 casa). Centésimos precisam de 2 casas: 0,08.')">0,8</button>
+            <button class="op" onclick="responder(this,true,'bl5','Isso! Centésimo = 2 casas depois da vírgula → 0,08. ✔')">0,08</button>
+            <button class="op" onclick="responder(this,false,'bl5','0,008 é oito MILÉSIMOS (3 casas).')">0,008</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) A fração <span class="frac"><span>95</span><span>100</span></span> escrita na forma decimal é...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl5','Perfeito! 95 centésimos = 0,95, como a taxa do Uruguai. 🇺🇾')">0,95</button>
+            <button class="op" onclick="responder(this,false,'bl5','9,5 seria nove inteiros e meio. 95/100 é menor que 1.')">9,5</button>
+            <button class="op" onclick="responder(this,false,'bl5','0,095 seria 95/1000 (milésimos).')">0,095</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) Uma balança mostra que Ana tem 50 kg. Qual é a massa máxima da mochila dela (um décimo)?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl5','Um décimo é ÷10: 50 ÷ 10 = 5 kg.')">0,5 kg</button>
+            <button class="op" onclick="responder(this,true,'bl5','Isso! 50 ÷ 10 = 5 kg. Mochila leve, coluna feliz! 🎒')">5 kg</button>
+            <button class="op" onclick="responder(this,false,'bl5','÷100 seria um centésimo. Décimo é ÷10 → 5 kg.')">0,05 kg</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 6 -->
+  <div class="bloco b6" id="bl6">
+    <h2 onclick="abrirBloco('bl6')">🌡️ Bloco 6 — Decimais maiores que 1 e como ler <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>A esperança de vida na Nigéria é <b>53,6 anos</b> e na Grécia, <b>80,6 anos</b>.
+      Esses números têm <b>parte inteira</b> (antes da vírgula) e <b>parte decimal</b> (depois da vírgula):</p>
+      <div class="exemplo">
+        53<b>,</b>6 → parte inteira = <b>53</b> | parte decimal = <b>6</b>
+      </div>
+      <p><b>Como ler?</b> Primeiro a parte inteira, depois a parte decimal conforme a posição do último algarismo:</p>
+      <div class="exemplo">
+        <b>5,8</b> → cinco inteiros e oito <b>décimos</b> (1 casa)<br>
+        <b>5,08</b> → cinco inteiros e oito <b>centésimos</b> (2 casas)<br>
+        <b>5,008</b> → cinco inteiros e oito <b>milésimos</b> (3 casas)<br>
+        <b>0,08</b> → parte inteira é zero: lemos só "oito centésimos"
+      </div>
+      <p>🗣️ Pedro disse que 84,5 anos são "84 anos e meio" — e ele está <b>certo</b>, porque 0,5 =
+      <span class="frac"><span>5</span><span>10</span></span> = <span class="frac"><span>1</span><span>2</span></span> = metade!</p>
+      <p>🖩 Curiosidade: em alguns países (e na calculadora!) usa-se <b>ponto</b> no lugar da vírgula: 35.6 = 35,6.</p>
+      <div class="caixinha">
+        <h4>📦 Caixinha de conceitos</h4>
+        <ul>
+          <li><b>Parte inteira</b>: antes da vírgula. <b>Parte decimal</b>: depois da vírgula.</li>
+          <li>1 casa = décimos • 2 casas = centésimos • 3 casas = milésimos.</li>
+          <li>0,5 = metade • 84,5 = 84 e meio.</li>
+        </ul>
+      </div>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) No número 59,6 (esperança de vida em Moçambique), qual é a parte decimal?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl6','59 é a parte INTEIRA (antes da vírgula).')">59</button>
+            <button class="op" onclick="responder(this,true,'bl6','Isso! Depois da vírgula: 6. Lemos: 59 inteiros e 6 décimos. ✔')">6</button>
+            <button class="op" onclick="responder(this,false,'bl6','O número todo é 59,6. A parte decimal é só o que vem após a vírgula: 6.')">59,6</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Como se lê o número <b>7,09</b>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl6','Com 2 casas decimais, lemos CENTÉSIMOS, não décimos.')">sete inteiros e nove décimos</button>
+            <button class="op" onclick="responder(this,true,'bl6','Perfeito! 2 casas após a vírgula = centésimos. ✔')">sete inteiros e nove centésimos</button>
+            <button class="op" onclick="responder(this,false,'bl6','Setenta e nove? Cuidado, a vírgula separa 7 de 09.')">setenta e nove</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) A projeção da esperança de vida da Coreia do Sul é 84,5 anos. Isso significa...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl6','Isso! 0,5 é igual a 1/2, ou seja, meio ano. 🎉')">84 anos e meio</button>
+            <button class="op" onclick="responder(this,false,'bl6','0,5 não é 5 meses: é metade de 1 ano (6 meses).')">84 anos e 5 meses</button>
+            <button class="op" onclick="responder(this,false,'bl6','845 seria sem a vírgula. A vírgula muda tudo!')">845 anos</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 7 -->
+  <div class="bloco b7" id="bl7">
+    <h2 onclick="abrirBloco('bl7')">⚖️ Bloco 7 — Comparação de números decimais <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>Hora de decidir: qual número decimal é maior? Siga os passos dos exploradores!</p>
+      <div class="caixinha">
+        <h4>📦 Os 3 passos da comparação</h4>
+        <ul>
+          <li><b>1º</b> Compare as <b>partes inteiras</b>: a maior vence! Ex.: 48,21 &gt; 45,99 (48 &gt; 45).</li>
+          <li><b>2º</b> Partes inteiras iguais? Compare a <b>parte decimal</b>: 55,95 &gt; 55,78 (95 centésimos &gt; 78 centésimos).</li>
+          <li><b>3º</b> Casas diferentes? <b>Iguale com zeros</b> à direita: 48,9 vira 48,90 → 48,90 &gt; 48,75.</li>
+        </ul>
+      </div>
+      <div class="exemplo">
+        ✨ Acrescentar zeros à direita da parte decimal <b>não muda o valor</b>: 0,5 = 0,50 = 0,500.<br>
+        🇦🇷🇲🇾 Argentina 76 anos vs. Malásia 76,3 anos → 76,0 &lt; 76,3: a Malásia tem a maior esperança de vida.<br>
+        🇱🇹🇱🇧 Lituânia 74,3 vs. Líbano 74,4 → 74,3 &lt; 74,4: na Lituânia é menor.
+      </div>
+      <p>⚠️ <b>Pegadinha da prova:</b> 46,9 vs. 46,09. Iguale: 46,90 vs. 46,09 → <b>46,9 &gt; 46,09</b>!
+      Não é o número "mais comprido" que ganha: 331,1 &gt; 99,999, porque 331 &gt; 99!</p>
+      <div class="quiz">
+        <h4>✏️ Mostre que entendeu!</h4>
+        <div class="perg">
+          <p>1) Compare: 65,7 ____ 65,07</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl7','Isso! 65,70 vs 65,07 → 70 centésimos > 7 centésimos. ✔')">65,7 &gt; 65,07</button>
+            <button class="op" onclick="responder(this,false,'bl7','Iguale as casas: 65,70 vs 65,07. Setenta centésimos é maior!')">65,7 &lt; 65,07</button>
+            <button class="op" onclick="responder(this,false,'bl7','Não são iguais: 65,70 ≠ 65,07. O zero no MEIO muda o valor!')">são iguais</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Qual afirmação é verdadeira?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl7','Certo! Zeros à DIREITA da parte decimal não mudam o valor. ✔')">0,5 = 0,50 = 0,500</button>
+            <button class="op" onclick="responder(this,false,'bl7','0,5 e 0,05 são diferentes: 5 décimos vs 5 centésimos.')">0,5 = 0,05</button>
+            <button class="op" onclick="responder(this,false,'bl7','99,999 tem parte inteira 99, que é MENOR que 331.')">99,999 &gt; 331,1</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) A taxa de mortalidade de Israel é 0,005 e a de Madagascar é 0,007. A do Brasil está entre as duas. Qual pode ser?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl7','0,600 é seiscentos milésimos — muito maior que 0,007!')">0,600</button>
+            <button class="op" onclick="responder(this,false,'bl7','0,060 ainda é maior que 0,007. Procure entre 5 e 7 milésimos.')">0,060</button>
+            <button class="op" onclick="responder(this,true,'bl7','Excelente! 0,005 < 0,006 < 0,007. Seis milésimos! 🎯')">0,006</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO 8 -->
+  <div class="bloco b8" id="bl8">
+    <h2 onclick="abrirBloco('bl8')">🏁 Bloco 8 — Revisão geral: o grande desafio! <span class="seta">▶</span></h2>
+    <div class="conteudo">
+      <p>🎓 Última parada da viagem! Misturamos tudo: frações E decimais. Valendo!</p>
+      <div class="quiz">
+        <h4>🌟 Desafio final</h4>
+        <div class="perg">
+          <p>1) Uma doceira fez 50 doces: 22 alfajores, 12 tiramissus e 16 strudels. Qual fração representa os alfajores?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl8','50 é o TOTAL, ele fica embaixo (denominador): 22/50.')">50/22</button>
+            <button class="op" onclick="responder(this,true,'bl8','Isso! 22 de um total de 50 → 22/50 (que simplifica para 11/25). 🍬')">22/50</button>
+            <button class="op" onclick="responder(this,false,'bl8','16/50 seria a fração dos strudels.')">16/50</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>2) Andressa comprou 8 kg de milho e usou 6 kg. A fração do milho que ela NÃO usou é...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl8','6/8 é o que ela USOU. Sobraram 2 kg de 8: 2/8.')">6/8</button>
+            <button class="op" onclick="responder(this,true,'bl8','Muito bem! Sobraram 8 − 6 = 2 kg → 2/8 (= 1/4). 🌽')">2/8</button>
+            <button class="op" onclick="responder(this,false,'bl8','8/8 seria o milho todo. Ela deixou de usar só 2 kg → 2/8.')">8/8</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>3) Qual representação NÃO é igual a <span class="frac"><span>4</span><span>10</span></span>?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl8','2/5 É igual: 4÷2=2 e 10÷2=5.')">2/5</button>
+            <button class="op" onclick="responder(this,false,'bl8','0,4 É igual: quatro décimos.')">0,4</button>
+            <button class="op" onclick="responder(this,true,'bl8','Isso! 0,004 são 4 MILÉSIMOS (4/1000), não 4 décimos. 🎯')">0,004</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>4) Na calculadora, 9 ÷ 5 dá 1.8. Esse resultado representa...</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl8','Certo! O ponto da calculadora é a nossa vírgula: 9/5 = 1,8. ✔')">a fração 9/5 na forma decimal (1,8)</button>
+            <button class="op" onclick="responder(this,false,'bl8','18 seria sem o ponto. O ponto funciona como a vírgula: 1,8.')">o número 18</button>
+            <button class="op" onclick="responder(this,false,'bl8','1,8 é MAIOR que 1 — afinal 9/5 é fração imprópria!')">um número menor que 1</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>5) Para sustentar o estilo de vida da América do Norte seriam necessários 5,2 planetas; da Europa, 2,7; da América Latina, 1,1. Ordene do menor para o maior:</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,true,'bl8','Perfeito! 1,1 < 2,7 < 5,2 — compare primeiro as partes inteiras. 🌎')">1,1 &lt; 2,7 &lt; 5,2</button>
+            <button class="op" onclick="responder(this,false,'bl8','Compare as partes inteiras: 1 < 2 < 5.')">2,7 &lt; 1,1 &lt; 5,2</button>
+            <button class="op" onclick="responder(this,false,'bl8','Essa é a ordem DECRESCENTE (do maior para o menor).')">5,2 &gt; 2,7 &gt; 1,1 é crescente</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+        <div class="perg">
+          <p>6) Japão investe 0,08 dos gastos públicos em educação; Bélgica, 0,11; Israel, 0,14; EUA, 0,12. Quem investe MENOS?</p>
+          <div class="ops">
+            <button class="op" onclick="responder(this,false,'bl8','Israel tem a MAIOR taxa (0,14).')">Israel</button>
+            <button class="op" onclick="responder(this,true,'bl8','Isso! 0,08 < 0,11 < 0,12 < 0,14. Oito centésimos é a menor taxa. 🇯🇵')">Japão</button>
+            <button class="op" onclick="responder(this,false,'bl8','0,11 é maior que 0,08. O menor é o Japão.')">Bélgica</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vfCard" id="parabensLG" style="display:none;">
+    <div class="confete">🎉🎊🏆🎊🎉</div>
+    <h2>Você completou a Leitura Guiada!</h2>
+    <p style="margin-top:8px;">Agora vá para a aba <b>⭐ Resumo da Prova</b> para revisar as palavras mágicas!</p>
+  </div>
+</div>
+
+<!-- ============ RESUMO ============ -->
+<div class="painel" id="p-resumo">
+
+  <h2 class="secTit">🗺️ Trilha da prova — o caminho do conteúdo</h2>
+  <div style="background:#fff;border-radius:14px;padding:16px;box-shadow:0 3px 9px #0001;line-height:2;">
+    1️⃣ <b>Fração de quantidade/medida</b> (÷ denominador, × numerador) →
+    2️⃣ <b>Tipos de fração</b> (própria, imprópria, aparente, número misto) →
+    3️⃣ <b>Equivalentes</b> (× ou ÷ os dois números) →
+    4️⃣ <b>Simplificação</b> (até a irredutível) →
+    5️⃣ <b>Comparação de frações</b> (3 regras) →
+    6️⃣ <b>Décimos, centésimos, milésimos</b> →
+    7️⃣ <b>Decimais maiores que 1</b> (parte inteira + decimal) →
+    8️⃣ <b>Comparação de decimais</b> (igualar casas com zeros)
+  </div>
+
+  <h2 class="secTit">🔤 Palavras mágicas da prova</h2>
+  <div class="gradePalavras">
+    <div class="cardPalavra"><b>Numerador</b><p>Número de cima da fração: quantas partes pegamos.</p></div>
+    <div class="cardPalavra"><b>Denominador</b><p>Número de baixo: em quantas partes iguais o inteiro foi dividido.</p></div>
+    <div class="cardPalavra"><b>Fração própria</b><p>Numerador menor que o denominador. Vale menos que 1. Ex.: 3/8.</p></div>
+    <div class="cardPalavra"><b>Fração imprópria</b><p>Numerador maior ou igual ao denominador. Vale 1 ou mais. Ex.: 5/3.</p></div>
+    <div class="cardPalavra"><b>Fração aparente</b><p>A divisão dá número inteiro exato. Ex.: 8/4 = 2, 6/6 = 1.</p></div>
+    <div class="cardPalavra"><b>Número misto</b><p>Inteiro + fração juntos. Ex.: 1½ = "um e meio".</p></div>
+    <div class="cardPalavra"><b>Frações equivalentes</b><p>Valem a mesma coisa. 1/2 = 2/4 = 3/6 = 4/8.</p></div>
+    <div class="cardPalavra"><b>Simplificar</b><p>Dividir os dois números pelo mesmo valor para "encolher" a fração.</p></div>
+    <div class="cardPalavra"><b>Fração irredutível</b><p>Não dá mais para simplificar. Ex.: 2/3, 1/2.</p></div>
+    <div class="cardPalavra"><b>Décimo</b><p>0,1 = 1/10. Uma casa depois da vírgula.</p></div>
+    <div class="cardPalavra"><b>Centésimo</b><p>0,01 = 1/100. Duas casas depois da vírgula.</p></div>
+    <div class="cardPalavra"><b>Milésimo</b><p>0,001 = 1/1000. Três casas depois da vírgula.</p></div>
+    <div class="cardPalavra"><b>Parte inteira</b><p>O que vem ANTES da vírgula. Em 53,6 → 53.</p></div>
+    <div class="cardPalavra"><b>Parte decimal</b><p>O que vem DEPOIS da vírgula. Em 53,6 → 6.</p></div>
+    <div class="cardPalavra"><b>Reta numérica</b><p>Linha onde marcamos os números em ordem: 0,62 &lt; 0,69 &lt; 0,88 &lt; 0,95.</p></div>
+  </div>
+
+  <h2 class="secTit">📌 Dicas de ouro para decorar</h2>
+  <div class="dicas">
+    <h3>Cola mental da Bia e do Léo 🤫</h3>
+    ✅ Fração de quantidade: <b>divide pelo de baixo, multiplica pelo de cima</b>.<br>
+    ✅ 1 litro = <b>1.000 mL</b> • 1 kg = <b>1.000 g</b> • mochila = no máximo <b>1 décimo</b> do seu peso.<br>
+    ✅ Equivalentes: <b>o que faz em cima, faz embaixo</b> (×2, ×3, ÷2...).<br>
+    ✅ Mesmo denominador → ganha o <b>maior numerador</b>. Mesmo numerador → ganha o <b>menor denominador</b>.<br>
+    ✅ 0,5 = 0,50 = 0,500 (zero à direita não muda nada!). Mas 0,5 ≠ 0,05!<br>
+    ✅ Comparar decimais: <b>parte inteira primeiro</b>; se empatar, iguale as casas com zeros.<br>
+    ✅ Leitura: 1 casa = <b>décimos</b>, 2 casas = <b>centésimos</b>, 3 casas = <b>milésimos</b>.<br>
+    ✅ 0,5 = metade → 84,5 anos = 84 anos <b>e meio</b>.
+  </div>
+
+  <h2 class="secTit">⚡ Quiz relâmpago (clique para ver a resposta)</h2>
+  <div class="relampago">
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 1/4 de 60 = ?<div class="resp">✔ 15 (60 ÷ 4 = 15)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 3/5 de 35 = ?<div class="resp">✔ 21 (35 ÷ 5 = 7 → 7 × 3 = 21)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 1/2 de 1 litro = quantos mL?<div class="resp">✔ 500 mL</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 10/2 é fração aparente? Vale quanto?<div class="resp">✔ Sim! 10 ÷ 2 = 5 inteiros</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 5/3 é própria ou imprópria?<div class="resp">✔ Imprópria (5 &gt; 3, vale mais que 1 inteiro)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Simplifique 10/30 até a irredutível.<div class="resp">✔ 1/3 (÷10 em cima e embaixo)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Qual é maior: 3/7 ou 3/5?<div class="resp">✔ 3/5 (numeradores iguais → menor denominador ganha)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Escreva 6/7 com denominador 14.<div class="resp">✔ 12/14 (×2 em cima e embaixo)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ "Quarenta centésimos" em decimal = ?<div class="resp">✔ 0,40 (que é igual a 0,4!)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Como se lê 0,988?<div class="resp">✔ Novecentos e oitenta e oito milésimos</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Parte inteira e decimal de 80,6?<div class="resp">✔ Inteira: 80 • Decimal: 6</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Quem é maior: 46,9 ou 46,09?<div class="resp">✔ 46,9 (iguale: 46,90 &gt; 46,09)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ Um milésimo de 3.000 = ?<div class="resp">✔ 3 (3.000 ÷ 1.000)</div></div>
+    <div class="pergR" onclick="this.classList.toggle('aberta')">❓ 0,42 no quadro de ordens: o 4 está em qual casa?<div class="resp">✔ Décimos (e o 2 nos centésimos)</div></div>
+  </div>
+
+  <div class="vfCard">
+    <h2>Pronta para o desafio? 🎮</h2>
+    <p style="margin:10px 0;">Agora teste tudo no jogo Verdadeiro ou Falso!</p>
+    <button class="btnJogar" onclick="trocarAba('p-vf')">Quero jogar Verdadeiro ou Falso! 🚀</button>
+  </div>
+</div>
+
+<!-- ============ VERDADEIRO OU FALSO ============ -->
+<div class="painel" id="p-vf">
+  <div class="placarBox">
+    <span>🎯 Rodada:</span>
+    <div class="barraFundo"><div class="barraFrente" id="barraVF"></div></div>
+    <span id="contaVF">0/12</span>
+    <span class="estrelas" id="placarVF">⭐ 0 acertos</span>
+  </div>
+
+  <div class="vfCard" id="cardVF">
+    <div class="vfFrase" id="fraseVF">Aperte COMEÇAR para jogar! Serão 12 frases sorteadas sobre frações e decimais. 🍀</div>
+    <div class="vfBotoes" id="botoesVF" style="display:none;">
+      <button class="btnV" onclick="responderVF(true)">✔ VERDADEIRO</button>
+      <button class="btnF" onclick="responderVF(false)">✘ FALSO</button>
+    </div>
+    <div class="vfExp" id="expVF"></div>
+    <button class="btnProx" id="btnComecar" onclick="comecarVF()">▶ COMEÇAR</button>
+    <button class="btnProx" id="btnProxVF" style="display:none;" onclick="proximaVF()">Próxima ➜</button>
+  </div>
+
+  <div class="vfCard telaFinal" id="finalVF" style="display:none;">
+    <div class="confete" id="emojiFinalVF">🎉</div>
+    <h2 id="tituloFinalVF"></h2>
+    <div class="notaGrande" id="notaVF"></div>
+    <p id="msgFinalVF"></p>
+    <button class="btnJogar" onclick="comecarVF()">🔄 Jogar de novo (perguntas embaralhadas)</button>
+  </div>
+</div>
+
+<div class="rodape">Missão Matemática • 5º ano • Unidades 3 e 4 — Feito com 💙 para mandar bem na prova de 12/06</div>
+
+<script>
+/* ====== ABAS ====== */
+function trocarAba(id){
+  document.querySelectorAll('.painel').forEach(function(p){p.classList.remove('ativo');});
+  document.getElementById(id).classList.add('ativo');
+  document.querySelectorAll('.aba').forEach(function(a){
+    a.classList.toggle('ativa', a.dataset.painel===id);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+document.querySelectorAll('.aba').forEach(function(a){
+  a.addEventListener('click', function(){trocarAba(a.dataset.painel);});
+});
+
+/* ====== LEITURA GUIADA ====== */
+var blocosFeitos = {};
+var totalBlocos = 8;
+
+function abrirBloco(id){
+  document.getElementById(id).classList.toggle('aberto');
+}
+
+function responder(btn, certa, blocoId, msg){
+  var perg = btn.closest('.perg');
+  var fb = perg.querySelector('.feedback');
+  var ops = perg.querySelectorAll('.op');
+  if(perg.dataset.feita==='1'){return;}
+  if(certa){
+    perg.dataset.feita='1';
+    btn.classList.add('certa');
+    ops.forEach(function(o){o.disabled=true;});
+    fb.className='feedback show ok';
+    fb.textContent='🎉 '+msg;
+    verificarBloco(blocoId);
+  } else {
+    btn.classList.add('errada');
+    btn.disabled=true;
+    fb.className='feedback show nok';
+    fb.textContent='🤔 '+msg+' Tente outra opção!';
+  }
+}
+
+function verificarBloco(blocoId){
+  var bloco = document.getElementById(blocoId);
+  var pendentes = bloco.querySelectorAll('.perg:not([data-feita])').length;
+  if(pendentes===0 && !blocosFeitos[blocoId]){
+    blocosFeitos[blocoId]=true;
+    atualizarProgresso();
+  }
+}
+
+function atualizarProgresso(){
+  var feitos = Object.keys(blocosFeitos).length;
+  var pct = Math.round(100*feitos/totalBlocos);
+  document.getElementById('barraLG').style.width = pct+'%';
+  document.getElementById('pctLG').textContent = pct+'%';
+  var s='';
+  for(var i=0;i<totalBlocos;i++){ s += (i<feitos ? '⭐':'☆'); }
+  document.getElementById('estrelasLG').textContent = s;
+  if(feitos===totalBlocos){
+    document.getElementById('parabensLG').style.display='block';
+    document.getElementById('parabensLG').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+/* ====== VERDADEIRO OU FALSO ====== */
+var frasesVF = [
+  {f:'Para calcular 1/3 de 12, dividimos 12 por 3 e o resultado é 4.', v:true,  e:'Dividimos pelo denominador (3): 12 ÷ 3 = 4. ✔'},
+  {f:'Para achar 2/5 de 400, basta dividir 400 por 2.', v:false, e:'Primeiro divide pelo DENOMINADOR: 400 ÷ 5 = 80, depois multiplica pelo numerador: 80 × 2 = 160.'},
+  {f:'3/4 de 1 litro é igual a 750 mL.', v:true,  e:'1.000 ÷ 4 = 250 e 250 × 3 = 750 mL. ✔'},
+  {f:'A fração 3/8 é uma fração imprópria.', v:false, e:'3 é MENOR que 8, então 3/8 é fração PRÓPRIA (menor que 1 inteiro).'},
+  {f:'A fração 8/4 é aparente e representa 2 inteiros.', v:true,  e:'8 ÷ 4 = 2 exato → fração aparente que vale 2 inteiros. ✔'},
+  {f:'Toda fração imprópria representa um número menor do que 1.', v:false, e:'É o contrário! Imprópria vale 1 OU MAIS (numerador ≥ denominador).'},
+  {f:'O número misto 1½ representa a fração 3/2.', v:true,  e:'1 inteiro = 2/2; mais 1/2 dá 3/2. ✔'},
+  {f:'As frações 1/2, 2/4 e 4/8 são equivalentes.', v:true,  e:'Todas representam metade! 1/2 = 2/4 = 4/8. ✔'},
+  {f:'Para obter uma fração equivalente, podemos somar o mesmo número em cima e embaixo.', v:false, e:'Somar NÃO vale! Tem que MULTIPLICAR ou DIVIDIR os dois pelo mesmo número.'},
+  {f:'Simplificando 12/18 por 6, obtemos 2/3.', v:true,  e:'12 ÷ 6 = 2 e 18 ÷ 6 = 3 → 2/3, irredutível. ✔'},
+  {f:'A fração 1/2 pode ser simplificada ainda mais.', v:false, e:'1/2 já é IRREDUTÍVEL: não há número (além do 1) que divida 1 e 2.'},
+  {f:'Com denominadores iguais, a fração maior é a que tem maior numerador.', v:true,  e:'Mesmo tamanho de pedaço → mais pedaços = mais quantidade. ✔'},
+  {f:'A fração 3/7 é maior do que 3/5.', v:false, e:'Numeradores iguais → MENOR denominador vence: 3/5 > 3/7 (pedaços maiores).'},
+  {f:'2/5 do pote de açaí é menos do que 3/5 do mesmo pote.', v:true,  e:'2 pedaços de 5 é menos que 3 pedaços de 5. ✔'},
+  {f:'O número 0,01 representa um décimo.', v:false, e:'0,01 tem DUAS casas decimais: é um CENTÉSIMO (1/100). Um décimo é 0,1.'},
+  {f:'0,2 e 2/10 representam a mesma quantidade.', v:true,  e:'Dois décimos = 0,2 = 2/10. ✔'},
+  {f:'Para calcular um milésimo de uma quantidade, dividimos por 1.000.', v:true,  e:'Décimo ÷10, centésimo ÷100, milésimo ÷1.000. ✔'},
+  {f:'No número 53,6, a parte inteira é 6.', v:false, e:'A parte inteira vem ANTES da vírgula: 53. O 6 é a parte decimal.'},
+  {f:'O número 5,08 se lê "cinco inteiros e oito centésimos".', v:true,  e:'Duas casas após a vírgula = centésimos. ✔'},
+  {f:'84,5 anos é o mesmo que 84 anos e meio.', v:true,  e:'0,5 = 1/2 = metade. ✔'},
+  {f:'0,5 e 0,50 são números diferentes.', v:false, e:'Zeros à DIREITA da parte decimal não mudam o valor: 0,5 = 0,50 = 0,500.'},
+  {f:'46,09 é maior do que 46,9.', v:false, e:'Iguale as casas: 46,09 vs 46,90 → 46,9 é maior!'},
+  {f:'99,999 é maior do que 331,1 porque tem mais algarismos.', v:false, e:'Compare a parte INTEIRA primeiro: 331 > 99. Ter mais algarismos não significa ser maior!'},
+  {f:'Na reta numérica, 0,62 vem antes de 0,88.', v:true,  e:'0,62 < 0,88, então fica mais perto do zero. ✔'},
+  {f:'Na calculadora, o ponto faz o papel da vírgula: 35.6 = 35,6.', v:true,  e:'Em alguns países (e na calculadora) usa-se ponto no lugar da vírgula. ✔'},
+  {f:'A taxa 0,95 significa 95 pessoas a cada 100.', v:true,  e:'95 centésimos = 95 em cada 100. ✔'}
+];
+
+var rodada=[], idxVF=0, acertosVF=0, totalRodada=12;
+
+function embaralhar(arr){
+  var a = arr.slice();
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+
+function comecarVF(){
+  rodada = embaralhar(frasesVF).slice(0,totalRodada);
+  idxVF=0; acertosVF=0;
+  document.getElementById('finalVF').style.display='none';
+  document.getElementById('cardVF').style.display='block';
+  document.getElementById('btnComecar').style.display='none';
+  mostrarVF();
+}
+
+function mostrarVF(){
+  var q = rodada[idxVF];
+  document.getElementById('fraseVF').textContent = '('+(idxVF+1)+'/'+totalRodada+') '+q.f;
+  document.getElementById('botoesVF').style.display='flex';
+  document.getElementById('expVF').className='vfExp';
+  document.getElementById('expVF').textContent='';
+  document.getElementById('btnProxVF').style.display='none';
+  document.getElementById('barraVF').style.width = Math.round(100*idxVF/totalRodada)+'%';
+  document.getElementById('contaVF').textContent = idxVF+'/'+totalRodada;
+}
+
+function responderVF(escolha){
+  var q = rodada[idxVF];
+  var exp = document.getElementById('expVF');
+  document.getElementById('botoesVF').style.display='none';
+  if(escolha===q.v){
+    acertosVF++;
+    exp.className='vfExp ok';
+    exp.innerHTML='✅ <b>Acertou!</b> '+q.e;
+  } else {
+    exp.className='vfExp nok';
+    exp.innerHTML='❌ <b>Ops!</b> A resposta certa era <b>'+(q.v?'VERDADEIRO':'FALSO')+'</b>. '+q.e;
+  }
+  document.getElementById('placarVF').textContent='⭐ '+acertosVF+' acertos';
+  document.getElementById('btnProxVF').style.display='inline-block';
+}
+
+function proximaVF(){
+  idxVF++;
+  if(idxVF<totalRodada){ mostrarVF(); }
+  else { finalizarVF(); }
+}
+
+function finalizarVF(){
+  document.getElementById('cardVF').style.display='none';
+  var pct = Math.round(100*acertosVF/totalRodada);
+  document.getElementById('barraVF').style.width='100%';
+  document.getElementById('contaVF').textContent=totalRodada+'/'+totalRodada;
+  var f = document.getElementById('finalVF');
+  f.style.display='block';
+  document.getElementById('notaVF').textContent = acertosVF+'/'+totalRodada+' ('+pct+'%)';
+  var estrelas = pct>=90?'⭐⭐⭐⭐⭐':pct>=75?'⭐⭐⭐⭐':pct>=50?'⭐⭐⭐':pct>=25?'⭐⭐':'⭐';
+  document.getElementById('emojiFinalVF').textContent = pct>=75?'🎉🏆🎉':'💪📚💪';
+  document.getElementById('tituloFinalVF').textContent =
+    pct>=90?'INCRÍVEL! Você é fera em frações e decimais!':
+    pct>=75?'Muito bem! Está quase perfeito!':
+    pct>=50?'Bom trabalho! Revise o resumo e jogue de novo!':
+    'Não desista! Releia a Leitura Guiada e tente outra vez!';
+  document.getElementById('msgFinalVF').textContent = estrelas+' — Quanto mais você joga, mais aprende!';
+}
+</script>
+</body>
+</html>

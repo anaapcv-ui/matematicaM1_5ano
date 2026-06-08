@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado — Matemática 5º Ano 📝</title>
+<style>
+  :root{--azul:#1e6fd9; --rosa:#e84d8a; --verde:#2eaf6b; --escuro:#2b3a55; --amarelo:#f7c948;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Segoe UI', Verdana, Arial, sans-serif;
+    background:linear-gradient(160deg,#e8f2ff,#fdeef5); min-height:100vh; color:var(--escuro);
+  }
+  .topo{
+    background:linear-gradient(90deg,#16599c,var(--azul)); color:#fff; text-align:center;
+    padding:18px 12px; border-bottom:6px solid var(--amarelo);
+  }
+  .topo h1{font-size:1.4em;}
+  .topo p{opacity:.92; margin-top:4px; font-size:.95em;}
+  .caixa{max-width:760px; margin:16px auto 60px; padding:0 12px;}
+  .placar{
+    background:#fff; border-radius:14px; padding:12px 16px; box-shadow:0 3px 10px #0002;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap; position:sticky; top:8px; z-index:10;
+  }
+  .barraFundo{flex:1; min-width:160px; height:18px; background:#e8edf5; border-radius:10px; overflow:hidden;}
+  .barraFrente{height:100%; width:0%; background:linear-gradient(90deg,var(--verde),var(--amarelo)); transition:.5s;}
+  .cartao{
+    background:#fff; border-radius:18px; padding:24px; margin-top:16px; box-shadow:0 4px 14px #0002;
+  }
+  .numQ{color:var(--azul); font-weight:bold; margin-bottom:6px;}
+  .enunciado{font-size:1.13em; line-height:1.65; margin-bottom:16px;}
+  .frac{display:inline-block; text-align:center; vertical-align:middle; margin:0 3px; font-weight:bold;}
+  .frac span{display:block; padding:0 5px;}
+  .frac span:first-child{border-bottom:2px solid currentColor;}
+  .ops{display:flex; flex-direction:column; gap:10px;}
+  .op{
+    text-align:left; border:2px solid #dbe3ef; background:#fff; border-radius:12px;
+    padding:12px 14px; font-size:1.03em; cursor:pointer; transition:.15s;
+  }
+  .op:hover{border-color:var(--azul); background:#f0f6ff; transform:translateX(3px);}
+  .op.certa{background:#d9f5e5; border-color:var(--verde);}
+  .op.errada{background:#ffe1e1; border-color:#e05555;}
+  .op:disabled{cursor:default;}
+  .aviso{margin-top:12px; padding:10px 12px; border-radius:10px; display:none; line-height:1.5;}
+  .aviso.ok{display:block; background:#d9f5e5; color:#19713f;}
+  .aviso.nok{display:block; background:#ffe9e9; color:#a33;}
+  .btn{
+    margin-top:16px; border:none; border-radius:24px; padding:13px 30px; font-size:1.05em;
+    font-weight:bold; cursor:pointer; background:var(--azul); color:#fff;
+  }
+  .btn:hover{transform:scale(1.04);}
+  .final{text-align:center; padding:26px 14px;}
+  .final h2{font-size:1.6em; margin-bottom:8px;}
+  .notona{font-size:3em; margin:12px 0; font-weight:bold;}
+  .codigo{
+    margin:16px auto; background:#fff8e1; border:3px dashed var(--amarelo); border-radius:14px;
+    padding:14px 18px; font-size:1.25em; font-weight:bold; letter-spacing:2px; max-width:320px;
+  }
+  .obs{color:#7a8499; font-size:.92em; margin-top:10px; line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <h1>📝 Simulado — Frações e Números Decimais</h1>
+  <p>5º ano • 25 questões • Leia com atenção e marque a única alternativa correta!</p>
+</div>
+
+<div class="caixa">
+  <div class="placar">
+    <span>📊 Questão <b id="numAtual">1</b>/25</span>
+    <div class="barraFundo"><div class="barraFrente" id="barra"></div></div>
+    <span>✅ <b id="acertos">0</b></span>
+    <span>❌ <b id="erros">0</b></span>
+  </div>
+
+  <div class="cartao" id="cartaoQ">
+    <div class="numQ" id="rotuloQ"></div>
+    <div class="enunciado" id="enunQ"></div>
+    <div class="ops" id="opsQ"></div>
+    <div class="aviso" id="avisoQ"></div>
+    <button class="btn" id="btnProx" style="display:none;" onclick="proxima()">Próxima questão ➜</button>
+  </div>
+
+  <div class="cartao final" id="telaFinal" style="display:none;">
+    <div style="font-size:2.2em;" id="emojiFinal">🎉</div>
+    <h2 id="tituloFinal"></h2>
+    <div class="notona" id="notaFinal"></div>
+    <p id="msgFinal" style="line-height:1.6;"></p>
+    <div class="codigo" id="codigoMagico"></div>
+    <p class="obs">🔑 Anote este <b>código mágico</b>! Ele desbloqueia o <b>Gabarito Comentado</b> para conferir
+    as explicações de cada questão junto com um adulto.</p>
+    <button class="btn" onclick="reiniciar()">🔄 Refazer o simulado</button>
+  </div>
+</div>
+
+<script>
+var QS = [
+ {e:'Lara fez 18 brigadeiros e deu <span class="frac"><span>1</span><span>2</span></span> deles para a vizinha. Quantos brigadeiros ela deu?',
+  ops:['6','9','12','18'], c:1,
+  exp:'1/2 de 18 → 18 ÷ 2 = 9.'},
+ {e:'Em uma festa junina havia 30 espetinhos. <span class="frac"><span>2</span><span>3</span></span> deles eram de queijo. Quantos espetinhos de queijo havia?',
+  ops:['10','15','20','25'], c:2,
+  exp:'30 ÷ 3 = 10 e 10 × 2 = 20.'},
+ {e:'Um restaurante japonês preparou 45 temakis. <span class="frac"><span>3</span><span>5</span></span> eram de salmão. Quantos temakis de salmão foram preparados?',
+  ops:['9','18','25','27'], c:3,
+  exp:'45 ÷ 5 = 9 e 9 × 3 = 27.'},
+ {e:'Téo comprou <span class="frac"><span>1</span><span>4</span></span> de litro de suco de caju. Quantos mililitros ele comprou?',
+  ops:['250 mL','400 mL','500 mL','750 mL'], c:0,
+  exp:'1 litro = 1.000 mL → 1.000 ÷ 4 = 250 mL.'},
+ {e:'Para uma receita de pão, Dona Rosa usou <span class="frac"><span>3</span><span>10</span></span> de 1 quilograma de farinha. Quantos gramas ela usou?',
+  ops:['30 g','100 g','300 g','3.000 g'], c:2,
+  exp:'1 kg = 1.000 g → 1.000 ÷ 10 = 100 e 100 × 3 = 300 g.'},
+ {e:'Como se lê a fração <span class="frac"><span>7</span><span>25</span></span>?',
+  ops:['sete vinte e cinco','sete vinte e cinco avos','vinte e cinco sétimos','sete quintos'], c:1,
+  exp:'Denominadores diferentes de 2 a 10 (e de 100, 1000...) usam a palavra "avos": sete vinte e cinco avos.'},
+ {e:'A fração <span class="frac"><span>5</span><span>9</span></span> é classificada como...',
+  ops:['imprópria','aparente','própria','número misto'], c:2,
+  exp:'O numerador (5) é menor que o denominador (9): fração própria, menor que 1 inteiro.'},
+ {e:'Em um concurso há 3 vagas para cada 36 candidatos. A fração <span class="frac"><span>3</span><span>36</span></span> simplificada ao máximo (irredutível) é...',
+  ops:['<span class="frac"><span>1</span><span>12</span></span>','<span class="frac"><span>3</span><span>12</span></span>','<span class="frac"><span>1</span><span>9</span></span>','<span class="frac"><span>6</span><span>72</span></span>'], c:0,
+  exp:'3 ÷ 3 = 1 e 36 ÷ 3 = 12 → 1/12, que não simplifica mais.'},
+ {e:'Uma travessa de lasanha foi cortada em 6 pedaços e todos foram comidos. A fração <span class="frac"><span>6</span><span>6</span></span> é...',
+  ops:['própria, pois é menor que 1','imprópria e vale 2 inteiros','aparente e vale 1 inteiro','impossível de classificar'], c:2,
+  exp:'6 ÷ 6 = 1 inteiro exato → fração aparente.'},
+ {e:'Vó Cida fez 2 tortas iguais, cortou cada uma em 6 fatias e a família comeu 9 fatias. A fração que representa o que foi comido é <span class="frac"><span>9</span><span>6</span></span>. Em número misto, isso é...',
+  ops:['1 inteiro e <span class="frac"><span>3</span><span>6</span></span>','2 inteiros e <span class="frac"><span>1</span><span>6</span></span>','1 inteiro e <span class="frac"><span>1</span><span>6</span></span>','<span class="frac"><span>6</span><span>9</span></span>'], c:0,
+  exp:'9/6 = 6/6 (1 torta inteira) + 3/6 → 1 inteiro e 3/6 (uma torta e meia!).'},
+ {e:'Qual fração é equivalente a <span class="frac"><span>2</span><span>7</span></span>?',
+  ops:['<span class="frac"><span>4</span><span>9</span></span>','<span class="frac"><span>6</span><span>21</span></span>','<span class="frac"><span>2</span><span>14</span></span>','<span class="frac"><span>20</span><span>7</span></span>'], c:1,
+  exp:'Multiplicando os DOIS por 3: 2×3=6 e 7×3=21 → 6/21.'},
+ {e:'Complete: <span class="frac"><span>4</span><span>5</span></span> = <span class="frac"><span>?</span><span>20</span></span>',
+  ops:['8','12','16','19'], c:2,
+  exp:'O denominador foi multiplicado por 4 (5×4=20), então o numerador também: 4×4=16.'},
+ {e:'Bruna afirmou que <span class="frac"><span>10</span><span>30</span></span> e <span class="frac"><span>1</span><span>3</span></span> representam a mesma quantidade. Ela está...',
+  ops:['errada, pois os números são diferentes','certa, pois 10 ÷ 10 = 1 e 30 ÷ 10 = 3','errada, pois 10/30 é maior','certa, pois toda fração vale 1/3'], c:1,
+  exp:'Dividindo numerador e denominador por 10, obtemos 1/3: são equivalentes.'},
+ {e:'Qual destas frações é <b>irredutível</b> (não dá mais para simplificar)?',
+  ops:['<span class="frac"><span>4</span><span>8</span></span>','<span class="frac"><span>5</span><span>10</span></span>','<span class="frac"><span>3</span><span>7</span></span>','<span class="frac"><span>6</span><span>9</span></span>'], c:2,
+  exp:'3 e 7 não têm divisor comum além do 1. As outras simplificam: 4/8=1/2, 5/10=1/2, 6/9=2/3.'},
+ {e:'Nina comeu <span class="frac"><span>4</span><span>9</span></span> de um bolo e Caio comeu <span class="frac"><span>7</span><span>9</span></span> de um bolo igual. Quem comeu mais?',
+  ops:['Nina','Caio','Os dois comeram o mesmo','Impossível saber'], c:1,
+  exp:'Denominadores iguais → maior numerador vence: 7/9 > 4/9.'},
+ {e:'Qual é a comparação correta entre <span class="frac"><span>2</span><span>5</span></span> e <span class="frac"><span>2</span><span>9</span></span>?',
+  ops:['<span class="frac"><span>2</span><span>5</span></span> &gt; <span class="frac"><span>2</span><span>9</span></span>','<span class="frac"><span>2</span><span>5</span></span> &lt; <span class="frac"><span>2</span><span>9</span></span>','são equivalentes','não dá para comparar'], c:0,
+  exp:'Numeradores iguais → o MENOR denominador forma pedaços maiores: 2/5 > 2/9.'},
+ {e:'Coloque em ordem <b>crescente</b>: <span class="frac"><span>7</span><span>2</span></span>, <span class="frac"><span>7</span><span>10</span></span> e <span class="frac"><span>7</span><span>5</span></span>',
+  ops:['<span class="frac"><span>7</span><span>2</span></span> &lt; <span class="frac"><span>7</span><span>5</span></span> &lt; <span class="frac"><span>7</span><span>10</span></span>','<span class="frac"><span>7</span><span>10</span></span> &lt; <span class="frac"><span>7</span><span>5</span></span> &lt; <span class="frac"><span>7</span><span>2</span></span>','<span class="frac"><span>7</span><span>5</span></span> &lt; <span class="frac"><span>7</span><span>2</span></span> &lt; <span class="frac"><span>7</span><span>10</span></span>','<span class="frac"><span>7</span><span>10</span></span> &lt; <span class="frac"><span>7</span><span>2</span></span> &lt; <span class="frac"><span>7</span><span>5</span></span>'], c:1,
+  exp:'Numeradores iguais: quanto MAIOR o denominador, MENOR a fração → 7/10 < 7/5 < 7/2.'},
+ {e:'Helena comeu <span class="frac"><span>1</span><span>2</span></span> de uma esfiha e Diego comeu <span class="frac"><span>5</span><span>8</span></span> de uma esfiha igual. Quem comeu mais?',
+  ops:['Helena','Diego','Comeram o mesmo','Impossível saber'], c:1,
+  exp:'1/2 = 4/8. Como 5/8 > 4/8, Diego comeu mais.'},
+ {e:'O número 0,9 representa...',
+  ops:['nove inteiros','nove décimos','nove centésimos','nove milésimos'], c:1,
+  exp:'Uma casa depois da vírgula = décimos: 0,9 = 9/10.'},
+ {e:'"Sessenta e três centésimos" na forma decimal é...',
+  ops:['0,63','6,3','0,063','63,0'], c:0,
+  exp:'Centésimos têm DUAS casas após a vírgula: 63/100 = 0,63.'},
+ {e:'A taxa de alfabetização de um país é 0,902. Esse número se lê...',
+  ops:['novecentos e dois décimos','noventa e dois centésimos','novecentos e dois milésimos','nove inteiros e dois centésimos'], c:2,
+  exp:'Três casas após a vírgula = milésimos: 902/1000.'},
+ {e:'A esperança de vida em certo país é de 77,8 anos. A parte inteira e a parte decimal desse número são, respectivamente...',
+  ops:['7 e 78','77 e 8','778 e 0','8 e 77'], c:1,
+  exp:'Antes da vírgula: 77 (parte inteira). Depois: 8 (parte decimal).'},
+ {e:'No número <b>3,065</b>, o algarismo 6 ocupa a casa dos...',
+  ops:['décimos','centésimos','milésimos','inteiros'], c:1,
+  exp:'3,065 → 0 décimos, 6 centésimos, 5 milésimos.'},
+ {e:'Qual é a comparação correta entre 9,8 e 9,79?',
+  ops:['9,8 &lt; 9,79','9,8 = 9,79','9,8 &gt; 9,79','não dá para comparar'], c:2,
+  exp:'Iguale as casas: 9,80 vs 9,79 → 80 centésimos > 79 centésimos.'},
+ {e:'A taxa de mortalidade do país A é 0,004 e a do país B é 0,006. O país C tem taxa MAIOR que A e MENOR que B. Qual pode ser a taxa do país C?',
+  ops:['0,003','0,005','0,007','0,050'], c:1,
+  exp:'Entre 4 e 6 milésimos está o 5: 0,004 < 0,005 < 0,006.'}
+];
+
+var idx=0, acertos=0, erros=0, respondida=false;
+
+function montar(){
+  respondida=false;
+  var q = QS[idx];
+  document.getElementById('rotuloQ').textContent = 'Questão '+(idx+1);
+  document.getElementById('enunQ').innerHTML = q.e;
+  document.getElementById('numAtual').textContent = idx+1;
+  document.getElementById('barra').style.width = Math.round(100*idx/QS.length)+'%';
+  var box = document.getElementById('opsQ');
+  box.innerHTML='';
+  var letras=['a)','b)','c)','d)'];
+  q.ops.forEach(function(texto,i){
+    var b=document.createElement('button');
+    b.className='op';
+    b.innerHTML='<b>'+letras[i]+'</b> '+texto;
+    b.onclick=function(){marcar(i,b);};
+    box.appendChild(b);
+  });
+  var av=document.getElementById('avisoQ');
+  av.className='aviso'; av.textContent='';
+  document.getElementById('btnProx').style.display='none';
+}
+
+function marcar(i,btn){
+  if(respondida){return;}
+  respondida=true;
+  var q=QS[idx];
+  var todas=document.querySelectorAll('#opsQ .op');
+  todas.forEach(function(o){o.disabled=true;});
+  var av=document.getElementById('avisoQ');
+  if(i===q.c){
+    acertos++;
+    btn.classList.add('certa');
+    av.className='aviso ok';
+    av.innerHTML='🎉 <b>Resposta correta!</b>';
+  } else {
+    erros++;
+    btn.classList.add('errada');
+    todas[q.c].classList.add('certa');
+    av.className='aviso nok';
+    av.innerHTML='❌ <b>Não foi dessa vez.</b> A explicação completa está no Gabarito Comentado.';
+  }
+  document.getElementById('acertos').textContent=acertos;
+  document.getElementById('erros').textContent=erros;
+  document.getElementById('btnProx').style.display='inline-block';
+  if(idx===QS.length-1){
+    document.getElementById('btnProx').textContent='Ver meu resultado 🏁';
+  }
+}
+
+function proxima(){
+  idx++;
+  if(idx<QS.length){ montar(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else { finalizar(); }
+}
+
+function gerarCodigo(){
+  var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var suf='';
+  for(var i=0;i<2;i++){ suf+=chars[Math.floor(Math.random()*chars.length)]; }
+  return 'SIM-'+acertos+'-'+suf;
+}
+
+function finalizar(){
+  document.getElementById('cartaoQ').style.display='none';
+  document.getElementById('barra').style.width='100%';
+  var pct=Math.round(100*acertos/QS.length);
+  var t=document.getElementById('telaFinal');
+  t.style.display='block';
+  document.getElementById('notaFinal').textContent=acertos+'/25 ('+pct+'%)';
+  document.getElementById('emojiFinal').textContent = pct>=80?'🏆🎉🏆':pct>=60?'🌟💪🌟':'📚💪📚';
+  document.getElementById('tituloFinal').textContent =
+    pct>=80?'Espetacular! Você está prontíssima para a prova!':
+    pct>=60?'Muito bem! Só falta um empurrãozinho!':
+    'Bom treino! Revise o material e tente de novo!';
+  document.getElementById('msgFinal').textContent =
+    pct>=80?'Continue assim e a prova vai ser moleza!':
+    pct>=60?'Revise as questões erradas no gabarito comentado e refaça o simulado.':
+    'Releia a Leitura Guiada e o Resumo, depois refaça o simulado. Você consegue!';
+  var cod=gerarCodigo();
+  document.getElementById('codigoMagico').textContent='🔑 '+cod;
+  try{
+    localStorage.setItem('simuladoMat5Feito','1');
+    localStorage.setItem('simuladoMat5Nota',String(acertos));
+  }catch(e){}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function reiniciar(){
+  idx=0; acertos=0; erros=0;
+  document.getElementById('acertos').textContent='0';
+  document.getElementById('erros').textContent='0';
+  document.getElementById('telaFinal').style.display='none';
+  document.getElementById('cartaoQ').style.display='block';
+  document.getElementById('btnProx').textContent='Próxima questão ➜';
+  montar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+montar();
+</script>
+</body>
+</html>
